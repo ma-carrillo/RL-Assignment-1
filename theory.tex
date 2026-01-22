@@ -1,0 +1,133 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\setstretch{1.15}
+
+\title{\textbf{Reinforcement Learning}\\
+Assignment 1 (Theoretical Questions)}
+
+\author{
+\begin{tabular}{c}
+\textbf{Group Members} \\
+\\
+Matheus da Silva Araujo \quad -- \quad ID!!! \\
+Miguel Ángel Carrillo \quad -- \quad ID!!!
+\end{tabular}
+}
+
+%\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\vspace{1cm}
+
+% --------------------
+\section*{Problem Statement}
+
+\textit{
+Application of the Lai--Robbins bound. The asymptotic lower bound on the total regret $L_T$ for any consistent bandit algorithm is given by the Lai--Robbins bound:
+\[
+\liminf_{T \to \infty} \frac{\mathbb{E}[L_T]}{\ln T}
+\ge
+\sum_{a:\,\Delta_a>0} \frac{\Delta_a}{D_{\mathrm{KL}}(P_a \,\|\, P_\ast)},
+\]
+where $D_{\mathrm{KL}}$ is the Kullback--Leibler divergence between the distribution of a suboptimal arm $a$ ($P_a$) and the optimal arm ($P_\ast$), and $\Delta_a$ is the gap in expected reward between the optimal arm and arm $a$.
+}
+
+\vspace{0.5cm}
+
+% --------------------
+\section{Question 1}
+
+\textit{
+Derive the explicit formula for the KL-divergence between two Bernoulli distributions with parameters $p$ and $q$:  
+\[
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)).
+\]
+}
+
+\noindent
+\textbf{Derivation:}
+
+General expression for KL-divergence between distributions $r(x)$ and $s(x)$:
+
+
+\[
+D_{\mathrm{KL}}(r(x) \,\|\, s(x)) = \sum_{x \in X} r(x) \log \left(\frac{r(x)}{s(x)} \right)
+\]
+
+Expression for a Bernoulli distribution with parameter $p$:
+
+\[
+P(X = x) = \begin{cases}
+    1 - p, & \text{if } X = 0 \\
+    p, & \text{if } X = 1
+\end{cases}
+\]
+
+Combining both expressions: 
+
+\begin{align*}
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q))
+&= \sum_{x \in X = \{0,1\}} P(X=x)
+   \log\left(\frac{P(X=x)}{Q(X=x)}\right) \\
+&= P(X=0)\log\left(\frac{P(X=0)}{Q(X=0)}\right)
+ + P(X=1)\log\left(\frac{P(X=1)}{Q(X=1)}\right) \\
+&= (1-p)\log\left(\frac{1-p}{1-q}\right)
+ + p\log\left(\frac{p}{q}\right).
+\end{align*}
+
+
+\subsection*{Final Answer}
+
+\[
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)) = (1-p)\log\left(\frac{1-p}{1-q}\right)
+ + p\log\left(\frac{p}{q}\right).
+\]
+
+\vspace{0.3cm}
+
+% --------------------
+\section{Question 2}
+
+\textit{
+Same question for two Gaussian distributions sharing the same variance.
+}
+
+\noindent
+\textbf{Derivation:}
+
+\subsection*{Answer}
+
+
+\vspace{0.3cm}
+
+% --------------------
+\section{Question 3}
+
+\textit{
+Show that for the Bernoulli bandit, it is ``easier'' (i.e., theoretically implies lower regret) to distinguish an arm with mean $p = 0.9$ from an optimal arm with $p_\ast = 0.99$ than it is to distinguish an arm with $p = 0.55$ from an optimal arm with $p_\ast = 0.64$, even though the difference in means is identical ($\Delta = 0.09$) in both cases. What about the Gaussian case?
+}
+
+\subsection*{Answer}
+
+\noindent
+\textbf{Bernoulli case:}
+
+\vspace{0.3cm}
+
+\noindent
+\textbf{Gaussian case:}
+
+\vspace{0.3cm}
+
+% --------------------
+\end{document}
