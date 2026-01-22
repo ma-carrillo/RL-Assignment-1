@@ -1,0 +1,247 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\setstretch{1.15}
+
+\title{\textbf{Reinforcement Learning}\\
+Assignment 1 (Theoretical Questions)}
+
+\author{
+\begin{tabular}{c}
+\textbf{Group Members} \\
+\\
+Matheus da Silva Araujo \quad -- \quad ID!!! \\
+Miguel Ángel Carrillo \quad -- \quad ID!!!
+\end{tabular}
+}
+
+%\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\vspace{1cm}
+
+% --------------------
+\section*{Problem Statement}
+
+\textit{
+Application of the Lai--Robbins bound. The asymptotic lower bound on the total regret $L_T$ for any consistent bandit algorithm is given by the Lai--Robbins bound:
+\[
+\liminf_{T \to \infty} \frac{\mathbb{E}[L_T]}{\ln T}
+\ge
+\sum_{a:\,\Delta_a>0} \frac{\Delta_a}{D_{\mathrm{KL}}(P_a \,\|\, P_\ast)},
+\]
+where $D_{\mathrm{KL}}$ is the Kullback--Leibler divergence between the distribution of a suboptimal arm $a$ ($P_a$) and the optimal arm ($P_\ast$), and $\Delta_a$ is the gap in expected reward between the optimal arm and arm $a$.
+}
+
+\vspace{0.5cm}
+
+% --------------------
+\section{Question 1}
+
+\textit{
+Derive the explicit formula for the KL-divergence between two Bernoulli distributions with parameters $p$ and $q$:  
+\[
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)).
+\]
+}
+
+\noindent
+\textbf{Derivation:}
+
+General expression for KL-divergence between distributions $r(x)$ and $s(x)$ with discrete random variables:
+
+
+\begin{equation} \label{eq:general-kl}
+    D_{\mathrm{KL}}(r(x) \,\|\, s(x)) = \sum_{x \in X} r(x) \log \left(\frac{r(x)}{s(x)} \right)
+\end{equation}
+
+Expression for a Bernoulli distribution with parameter $p$:
+
+\[
+P(X = x) = \begin{cases}
+    1 - p, & \text{if } X = 0 \\
+    p, & \text{if } X = 1
+\end{cases}
+\]
+
+Combining both expressions: 
+
+\begin{align*}
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q))
+&= \sum_{x \in X = \{0,1\}} P(X=x)
+   \log\left(\frac{P(X=x)}{Q(X=x)}\right) \\
+&= P(X=0)\log\left(\frac{P(X=0)}{Q(X=0)}\right)
+ + P(X=1)\log\left(\frac{P(X=1)}{Q(X=1)}\right) \\
+&= (1-p)\log\left(\frac{1-p}{1-q}\right)
+ + p\log\left(\frac{p}{q}\right).
+\end{align*}
+
+
+\subsection*{Final Answer}
+
+\[
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)) = (1-p)\log\left(\frac{1-p}{1-q}\right)
+ + p\log\left(\frac{p}{q}\right).
+\]
+
+\vspace{0.3cm}
+
+% --------------------
+\section{Question 2}
+
+\textit{
+Same question for two Gaussian distributions sharing the same variance.
+}
+
+\noindent
+\textbf{Derivation:}
+
+General expression for Gaussian distribution with variance $\sigma^{2}$ and mean $\mu$:
+
+\[
+\mathcal{N}(x, \mu, \sigma)
+=
+\frac{1}{\sqrt{2\pi}\,\sigma}
+\exp\!\left(
+-\frac{(x-\mu)^2}{2\sigma^2}
+\right)
+\]
+
+Assuming without loss of generality that the two Gaussian distributions have different means, $P(X, \mu_{1}, \sigma), Q(X, \mu_{2}, \sigma) $.
+
+General expression for KL-divergence between distributions $R(x)$ and $S(x)$ with continuous random variables:
+
+
+\begin{equation} \label{eq:general-cont-kl}
+    D_{\mathrm{KL}}(R(x) \,\|\, S(x)) = \int_{-\infty}^{+\infty} R(x) \log \left(\frac{R(x)}{S(x)} \right) dx = \mathbb{E}_{X \sim R}
+\left[
+\log\!\left(\frac{R(X)}{S(X)}\right)
+\right]
+\end{equation},
+
+where $\mathbb{E}$ is the expected value.
+
+Analyzing the log-term isolated first:
+\begin{align*} 
+\log \frac{P(x)}{Q(x)}
+&= \log P(x) - \log Q(x) \\
+&= \log \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   \exp\!\left(\frac{(x-\mu_1)^2}{2\sigma^2} \right) \right]
+   - \log \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   \exp\!\left(\frac{(x-\mu_2)^2}{2\sigma^2} \right) \right] \\
+&= \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   - \frac{(x-\mu_1)^2}{2\sigma^2}
+   - \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   + \frac{(x-\mu_2)^2}{2\sigma^2} \\
+&=  \frac{(x-\mu_2)^2 - (x-\mu_1)^2}{2\sigma^2}
+\end{align*}
+
+
+\begin{equation} \label{eq:q2-log}
+    \rightarrow \log \frac{P(x)}{Q(x)} = \frac{(x-\mu_2)^2 - (x-\mu_1)^2}{2\sigma^2}
+\end{equation}
+
+Analyzing the numerator of Equation \ref{eq:q2-log}:
+
+\begin{align*} 
+(x-\mu_2)^2 - (x-\mu_1)^2
+&= (x^2 - 2x\mu_2 + \mu_2^2)
+ - (x^2 - 2x\mu_1 + \mu_1^2) \\
+&= 2x(\mu_1 - \mu_2) + \mu_2^2 - \mu_1^2 \\
+&= 2x(\mu_1 - \mu_2)
+ + (\mu_2 - \mu_1)(\mu_2 + \mu_1) \\
+&= (\mu_1 - \mu_2)(2x - \mu_2 - \mu_1)
+\end{align*}
+
+\begin{equation} \label{eq:q2-num}
+    \rightarrow (x-\mu_2)^2 - (x-\mu_1)^2 =  (\mu_1 - \mu_2)(2x - \mu_2 - \mu_1)
+\end{equation}
+
+Substituting Equations \ref{eq:q2-num} into the numerator of \ref{eq:q2-log}:
+
+\begin{equation} \label{eq:q2-log-final}
+\log \frac{P(x)}{Q(x)}
+= \frac{(\mu_1 - \mu_2)(2x - \mu_1 - \mu_2)}{2\sigma^2}
+\end{equation}
+
+Then, from the expected value definition of KL-divergence and Equation \ref{eq:q2-log-final}, it follows that
+\begin{equation} \label{eq:q2-temp1}
+\begin{aligned}
+D_{\mathrm{KL}}(P(x) \,\|\, Q(x))
+&= \mathbb{E}_{X \sim P}
+\left[
+\log\!\left(\frac{P(X)}{Q(X)}\right)
+\right] \\
+&= \mathbb{E}_{X \sim P}
+\left[
+\frac{(\mu_1 - \mu_2)(2X - \mu_1 - \mu_2)}{2\sigma^2}
+\right] \\
+&= \frac{(\mu_1 - \mu_2)}{2\sigma^2}
+\mathbb{E}_{X \sim P}
+\left[
+2X - \mu_1 - \mu_2
+\right].
+\end{aligned}
+\end{equation}
+
+Finally, from the linearity of expectation ($\mathbb{E}\left[aX + b\right] = a \mathbb{E}\left]X\right] + b$) and the information that $P(X)$ is a Gaussian distribution (implying that $\mathbb{E}_{X \sim P} = \mu_{1}$), applied to Equation \ref{eq:q2-temp1}:
+
+\begin{align*}
+    D_{\mathrm{KL}}(P(x) \,\|\, Q(x)) \\
+    &= \frac{(\mu_1 - \mu_2)}{2\sigma^2} \mathbb{E}_{X \sim P}
+\left[
+(2X - \mu_1 - \mu_2)
+\right] \\
+&= \frac{(\mu_1 - \mu_2)}{2\sigma^2} \left(
+2\mu_1 - \mu_1 - \mu_2
+\right) \\
+&= \frac{(\mu_1 - \mu_2)}{2\sigma^2} \left(
+\mu_1 - \mu_2
+\right) \\
+&= \frac{(\mu_1 - \mu_2)^2}{2\sigma^2}
+\end{align*}
+
+\begin{align*}
+    \rightarrow D_{\mathrm{KL}}(\mathrm{P(X, \mu_{1}, \sigma)}(X)\,\|\,\mathrm{Q(X, \mu_{2}, \sigma)}(X)) &= \\
+    \frac{(\mu_1 - \mu_2)^2}{2\sigma^2}
+\end{align*}
+
+\subsection*{Answer}
+
+\begin{equation}
+    D_{\mathrm{KL}}(\mathrm{P(X, \mu_{1}, \sigma)}(X)\,\|\,\mathrm{Q(X, \mu_{2}, \sigma)}(X)) = 
+    \frac{(\mu_1 - \mu_2)^2}{2\sigma^2}
+\end{equation}
+
+\vspace{0.3cm}
+
+% --------------------
+\section{Question 3}
+
+\textit{
+Show that for the Bernoulli bandit, it is ``easier'' (i.e., theoretically implies lower regret) to distinguish an arm with mean $p = 0.9$ from an optimal arm with $p_\ast = 0.99$ than it is to distinguish an arm with $p = 0.55$ from an optimal arm with $p_\ast = 0.64$, even though the difference in means is identical ($\Delta = 0.09$) in both cases. What about the Gaussian case?
+}
+
+\subsection*{Answer}
+
+\noindent
+\textbf{Bernoulli case:}
+
+\vspace{0.3cm}
+
+\noindent
+\textbf{Gaussian case:}
+
+\vspace{0.3cm}
+
+% --------------------
+\end{document}
