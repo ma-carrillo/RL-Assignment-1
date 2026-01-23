@@ -135,13 +135,17 @@ Analyzing the log-term isolated first:
 \log \frac{P(x)}{Q(x)}
 &= \log P(x) - \log Q(x) \\
 &= \log \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
-   \exp\!\left(\frac{(x-\mu_1)^2}{2\sigma^2} \right) \right]
+   \exp\!\left(-\frac{(x-\mu_1)^2}{2\sigma^2} \right) \right]
    - \log \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
-   \exp\!\left(\frac{(x-\mu_2)^2}{2\sigma^2} \right) \right] \\
-&= \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
-   - \frac{(x-\mu_1)^2}{2\sigma^2}
-   - \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
-   + \frac{(x-\mu_2)^2}{2\sigma^2} \\
+   \exp\!\left(-\frac{(x-\mu_2)^2}{2\sigma^2} \right) \right] \\
+&= \left( \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   + \log \left(\exp \left(-\frac{(x-\mu_1)^2}{2\sigma^2} \right) \right) \right)
+   - \left( \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   + \log \left(\exp \left( -\frac{(x-\mu_2)^2}{2\sigma^2} \right) \right) \right) \\
+&= \left( \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   - \frac{(x-\mu_1)^2}{2\sigma^2} \right)
+   - \left( \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
+   - \frac{(x-\mu_2)^2}{2\sigma^2} \right) \\
 &=  \frac{(x-\mu_2)^2 - (x-\mu_1)^2}{2\sigma^2}
 \end{align*}
 
