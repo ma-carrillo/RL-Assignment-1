@@ -236,10 +236,72 @@ Show that for the Bernoulli bandit, it is ``easier'' (i.e., theoretically implie
 \noindent
 \textbf{Bernoulli case:}
 
+From Question 1 final answer:
+
+\[
+D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)) = (1-p)\log\left(\frac{1-p}{1-q}\right)
+ + p\log\left(\frac{p}{q}\right).
+\]
+
+For $p = 0.9, p_{*} = 0.99$ using the distributions $P_{\mathrm{a}}, P_{*}$:
+
+
+\begin{equation*}
+D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(p)\,\|\,\mathrm{P}_{*}(p_{*})) = D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(0.9)\,\|\,\mathrm{P}_{*}(0.99)) =  (1-p)\log\left(\frac{1-p}{1-p_{*}}\right)
+ + p\log\left(\frac{p}{p_{*}}\right) \approx 0.1445
+\end{equation*}
+
+By applying the previous value and $\Delta_{\mathrm{a}} = 0.09$ in the Lai-Robbins bound, it is obtained
+
+\begin{equation} \label{eq:q3-ber-regret1}
+    \frac{\Delta_a}{D_{\mathrm{KL}}(P_a \,\|\, P_\ast)} \approx \frac{0.09}{0.1445} \approx 0.623
+\end{equation}
+
+Likewise, for $p = 0.55, p_{*} = 0.64$ using the distributions $P_{\mathrm{a}}, P_{*}$:
+
+
+\begin{equation*}
+D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(p)\,\|\,\mathrm{P}_{*}(p_{*})) = D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(0.55)\,\|\,\mathrm{P}_{*}(0.64)) =  (1-p)\log\left(\frac{1-p}{1-p_{*}}\right)
+ + p\log\left(\frac{p}{p_{*}}\right) \approx 0.0171
+\end{equation*}
+
+Again, by applying the previous value and $\Delta_{\mathrm{a}} = 0.09$ in the Lai-Robbins bound, it is obtained
+
+\begin{equation} \label{eq:q3-ber-regret2}
+    \frac{\Delta_a}{D_{\mathrm{KL}}(P_a \,\|\, P_\ast)} \approx \frac{0.09}{0.0171} \approx 5.26
+\end{equation}
+
+Comparing Equations \ref{eq:q3-ber-regret1} and \ref{eq:q3-ber-regret2}, the conclusion is that the theoretical lower bound for the regret is smaller in the first case ($p = 0.9, p_{\ast} = 0.99$) than in the second case ($p = 0.55, p_{\ast} = 0.64$), which means that the first case is "easier".
+
 \vspace{0.3cm}
 
 \noindent
 \textbf{Gaussian case:}
+
+From Question 2 final answer:
+
+\begin{equation}
+    D_{\mathrm{KL}}(\mathrm{P(X, \mu_{1}, \sigma)}(X)\,\|\,\mathrm{Q(X, \mu_{2}, \sigma)}(X)) = 
+    \frac{(\mu_1 - \mu_2)^2}{2\sigma^2}
+\end{equation}
+
+
+For $p = \mu_{1} = 0.9, p_{*} = \mu_2 = 0.99$ using the Gaussian distributions $P_{\mathrm{a}}, P_{*}$:
+
+\begin{equation*}
+D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(p, \sigma)\,\|\,\mathrm{P}_{*}(p_{*}, \sigma)) = \frac{(\mu_1 - \mu_2)^2}{2\sigma^2} = \frac{(0.9 - 0.99)^2}{2\sigma^2}  = \frac{0.09^{2}}{2\sigma^2}
+\end{equation*}
+
+
+For $p = \mu_{1} = 0.55, p_{*} = \mu_2 = 0.64$ using the Gaussian distributions $P_{\mathrm{a}}, P_{*}$:
+
+\begin{equation*}
+D_{\mathrm{KL}}(\mathrm{P}_{\mathrm{a}}(p, \sigma)\,\|\,\mathrm{P}_{*}(p_{*}, \sigma)) = \frac{(\mu_1 - \mu_2)^2}{2\sigma^2} = \frac{(0.55 - 0.64)^2}{2\sigma^2}  = \frac{0.09^{2}}{2\sigma^2}
+\end{equation*}
+
+Since the gaps are the same and the KL-divergence is the same in both cases, this means that one does not have a theoretically lower bound than the other, meaning that one is not easier than the other.
+
+\textbf{Conclusion}: the theoretical lower bound depends only on the gap and, as such, both cases have the same theoretical lower bound and are equally "easy".
 
 \vspace{0.3cm}
 
