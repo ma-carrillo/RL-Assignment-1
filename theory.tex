@@ -45,7 +45,7 @@ where $D_{\mathrm{KL}}$ is the Kullback--Leibler divergence between the distribu
 \vspace{0.5cm}
 
 % --------------------
-\section{Question 1}
+\section*{Question 1}
 
 \textit{
 Derive the explicit formula for the KL-divergence between two Bernoulli distributions with parameters $p$ and $q$:  
@@ -96,7 +96,7 @@ D_{\mathrm{KL}}(\mathrm{Ber}(p)\,\|\,\mathrm{Ber}(q)) = (1-p)\log\left(\frac{1-p
 \vspace{0.3cm}
 
 % --------------------
-\section{Question 2}
+\section*{Question 2}
 
 \textit{
 Same question for two Gaussian distributions sharing the same variance.
@@ -219,7 +219,7 @@ Finally, from the linearity of expectation ($\mathbb{E}\left[aX + b\right] = a \
     \frac{(\mu_1 - \mu_2)^2}{2\sigma^2}
 \end{align*}
 
-\subsection*{Answer}
+\subsection*{Final Answer}
 
 \begin{equation}
     D_{\mathrm{KL}}(\mathrm{P(X, \mu_{1}, \sigma)}(X)\,\|\,\mathrm{Q(X, \mu_{2}, \sigma)}(X)) = 
@@ -229,7 +229,7 @@ Finally, from the linearity of expectation ($\mathbb{E}\left[aX + b\right] = a \
 \vspace{0.3cm}
 
 % --------------------
-\section{Question 3}
+\section*{Question 3}
 
 \textit{
 Show that for the Bernoulli bandit, it is ``easier'' (i.e., theoretically implies lower regret) to distinguish an arm with mean $p = 0.9$ from an optimal arm with $p_\ast = 0.99$ than it is to distinguish an arm with $p = 0.55$ from an optimal arm with $p_\ast = 0.64$, even though the difference in means is identical ($\Delta = 0.09$) in both cases. What about the Gaussian case?
@@ -308,6 +308,144 @@ Since the gaps are the same and the KL-divergence is the same in both cases, thi
 \textbf{Conclusion}: the theoretical lower bound depends only on the gap and, as such, both cases have the same theoretical lower bound and are equally "easy".
 
 \vspace{0.3cm}
+
+\section*{Proof of simplified Lai-Robbins bound}
+
+\textit{
+Consider two Bernoulli arms:
+}
+
+\begin{itemize}
+    \item \textit{Arm 1 has a known success probability $p_1 = 0.5$.}
+    \item \textit{Arm 2 has an unknown success probability $p_2 = 0.5 + \Delta$.}
+\end{itemize}
+
+\textit{
+You want to determine if Arm 2 is better than Arm 1 with high confidence. You collect $n$ samples from Arm 2 and compute the empirical mean $\hat{p}_n$. You decide Arm 2 is ``Better'' if $\hat{p}_n > 0.5$.
+}
+
+
+\section{Question 4}
+
+\textit{
+    Suppose the truth is that Arm 2 is actually worse ($\Delta < 0$). Use Hoeffding’s inequality to find an upper bound on the probability that you incorrectly classify it as ``Better'' (i.e., $P(\hat{p}_n > 0.5)$) after $n$ samples.
+    }
+
+
+Hoeffding's Inequality states that for independent identically distributed random variables $X_1, \ldots, X_n$ with expected value $\mu$:
+\[
+P(\bar{X}_n - \mu \geq t) \leq \exp\left(-2nt^2\right)
+\]
+
+Let $X_1, \ldots, X_n$ be the $n$ samples from Arm 2, where each $X_i \sim \text{Ber}(p_2)$ with $p_2 = 0.5 + \Delta$ and $\Delta < 0$.
+
+The empirical mean is:
+\[
+\hat{p}_n = \frac{1}{n}\sum_{i=1}^n X_i
+\]
+
+Since it is a Bernoulli distribution, the expected value $\mu = p_2$.
+
+The question asks to bound the expression
+\[
+P(\hat{p}_n > 0.5) = P(\hat{p}_n - p_2 > 0.5 - p_2)
+\]
+
+Note that $p_2 = 0.5 + \Delta \rightarrow
+0.5 - p_2 = -\Delta $
+
+Combining the last two expressions, the required expression is equivalent to bound
+\[
+P(\hat{p}_n - p_2 > -\Delta)
+\]
+
+Note that $\Delta < 0 \rightarrow -\Delta > 0$, which is a deviation above the mean of the distribution. 
+
+Finally, set $t = -\Delta$ (which is positive because $\Delta < 0$) in the Hoeffdings Inequality to obtain:
+\[
+P(\hat{p}_n > 0.5) = P(\hat{p}_n - p_2 > -\Delta) \leq \exp(-2n\Delta^2)
+\]
+
+This is an upper bound on the probability required in the question.
+
+\subsection*{Final Answer}
+\[
+\boxed{P(\hat{p}_n > 0.5) \leq \exp(-2n\Delta^2)}
+\]
+
+\section*{Question 5}
+
+\textit{
+    Set this error probability to be at most $\delta$ (e.g., $\delta = 1/T$). Rearrange your bounds to show that the number of samples $n$ required to avoid this error must be at least:
+    }
+    \[
+        n \ge \frac{\ln(1/\delta)}{2\Delta^2}.
+    \]
+
+In Question 4 final answer it was obtained:
+\[
+P(\hat{p}_n > 0.5) \leq \exp(-2n\Delta^2)
+\]
+
+The question asks that the probability of misclassification to be at most $\delta$ i.e.,
+\[
+P(\hat{p}_n > 0.5) \leq \delta
+\]
+
+Using this upper bound:
+
+\[
+\begin{aligned}
+P(\hat{p}_n > 0.5)
+&\le \exp(-2n\Delta^2) \le \delta \\
+\implies\quad
+-2n\Delta^2 &\le \ln(\delta) \\
+\implies\quad
+2n\Delta^2 &\ge \ln(1/\delta) \\
+\implies\quad
+n &\ge \frac{\ln(1/\delta)}{2\Delta^2}.
+\end{aligned}
+\]
+
+\subsection*{Final Answer}
+\[
+\boxed{n \geq \frac{\ln(1/\delta)}{2\Delta^2}}
+\]
+
+\section*{Question 6}
+
+\textit{
+    For small gaps, $D_{\mathrm{KL}} \approx 2\Delta^2$. Substitute $D_{\mathrm{KL}}$ into the inequality above. Explain how this explains the Lai--Robbins term
+    }
+    \[
+        \frac{\ln T}{D_{\mathrm{KL}}}.
+    \]
+
+From Question 4, it was determined that the number of samples needed is:
+\[
+n \geq \frac{\ln(1/\delta)}{2\Delta^2}
+\]
+
+Using the approximation for small gaps specified in the problem statement $D_{KL} \approx 2\Delta^2$ and substituting into the previous bound:
+\[
+n \geq \frac{\ln(1/\delta)}{D_{KL}}
+\]
+
+Setting $\delta = 1/T$ (the probability of error tolerated over $T$ rounds):
+\[
+n \geq \frac{\ln(T)}{D_{KL}}
+\]
+
+This shows that, in order to distinguish a suboptimal Bernoulli arm from the optimal arm with error probability at most $1/T$, the suboptimal arm must be sampled at least on the order of
+\[
+\frac{\ln T}{D_{\mathrm{KL}}(P_a\|P_*)}
+\]
+times. Since each such sample incurs regret $\Delta$, this directly explains the Lai--Robbins bound term
+\[
+\frac{\Delta \ln T}{D_{\mathrm{KL}}(P_a\|P_*)}.
+\]
+
+
 
 % --------------------
 \end{document}
