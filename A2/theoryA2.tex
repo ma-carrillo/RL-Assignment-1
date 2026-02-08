@@ -1,0 +1,455 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\setstretch{1.15}
+
+\title{\textbf{Reinforcement Learning}\\
+Assignment 2 (Theoretical Questions)}
+
+\author{
+\begin{tabular}{c}
+\textbf{Group Members} \\
+\\
+Group ID - 31 \\
+Matheus da Silva Araujo \quad -- \quad 261218407 \\
+Miguel Ángel Carrillo \quad -- \quad 261205372
+\end{tabular}
+}
+
+%\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\vspace{1cm}
+
+% --------------------
+\section{Theoretical questions}
+\subsection{Question 1}
+
+Consider a discounted Markov Decision Process (MDP) where the rewards are bounded:
+\[
+|R(s,a)| \le R_{\max} \quad \text{for all states } s \in \mathcal{S} \text{ and actions } a \in \mathcal{A}
+\]
+
+The value of state $s$ for the policy $\pi$ is defined as:
+\[
+v_{\pi}(s) = \mathbb{E}_{\pi} \left[ \sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1} \,\middle|\, S_t = s \right]
+\]
+
+What is the maximum value of $v_{\pi}(s)$ across all states and policies?  
+Provide an upper bound on $|v_{\pi}(s)|$ in terms of $R_{\max}$ and $\gamma$.
+
+
+
+\vspace{1em}
+\vspace{1em}
+\textbf{Answer:}
+\vspace{1em}
+\vspace{1em}
+
+We start from the definition of the state-value function:
+\[
+v_\pi(s)
+= \mathbb{E}_\pi\!\left[
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1}
+\;\middle|\; S_t = s
+\right],
+\quad \gamma \in [0,1)
+\]
+
+Assume that rewards are bounded:
+\[
+|R(s,a)| \le R_{\max}
+\quad \forall s \in \mathcal S,\ a \in \mathcal A
+\]
+
+We first bound the absolute value of the return:
+\[
+\left|
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1}
+\right|
+\le
+\sum_{k=t}^{\infty} \gamma^{k-t} |R_{k+1}|
+\le
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{\max}
+\]
+
+Re-indexing with $n = k - t$, we obtain:
+\[
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{\max}
+=
+R_{\max} \sum_{n=0}^{\infty} \gamma^n
+\]
+
+If $0 \le \gamma < 1$, the geometric series converges:
+\[
+\sum_{n=0}^{\infty} \gamma^n = \frac{1}{1-\gamma}
+\]
+
+If we substitute into our earlier inequality:
+\[
+\left|
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1}
+\right|
+\le
+\frac{R_{\max}}{1-\gamma}
+\]
+
+Now we substitute this bound into the value function and use the triangle inequality
+$|\mathbb{E}[X]| \le \mathbb{E}[|X|]$:
+\[
+|v_\pi(s)|
+=
+\left|
+\mathbb{E}_\pi\!\left[
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1}
+\;\middle|\; S_t = s
+\right]
+\right|
+\le
+\mathbb{E}_\pi\!\left[
+\left|
+\sum_{k=t}^{\infty} \gamma^{k-t} R_{k+1}
+\right|
+\;\middle|\; S_t = s
+\right]
+\le
+\frac{R_{\max}}{1-\gamma}
+\]
+
+Finally, provided that $\gamma \in [0,1)$ so that the discounted return is not infinite, we have:
+\[
+\boxed{
+|v_\pi(s)| \le \frac{R_{\max}}{1-\gamma}
+\quad \forall s,\ \forall \pi
+}
+\]
+
+
+
+
+
+
+\subsection{Question 2}
+
+
+Define the $\lambda$-return $G_t^{\lambda}$ and the corresponding Bellman operator $T^{\lambda}$
+Prove that $T^{\lambda}$ is a contraction mapping in the $L_{\infty}$ norm.
+In other words, show that:
+\[
+\left\| T^{\lambda} v - T^{\lambda} u \right\|_{\infty}
+\le \eta \left\| v - u \right\|_{\infty}
+\]
+for some $\eta < 1$
+Briefly explain the rate of contraction as a function of $\lambda$ and $\gamma$.
+
+
+
+\vspace{1em}
+\vspace{1em}
+\textbf{Answer:}
+\vspace{1em}
+\vspace{1em}
+
+We first define the $\lambda$-return and its Bellman operator. Then we show that this operator is a contraction in the $L_\infty$ norm.
+
+\paragraph{Definition of the $\lambda$-return.}
+For a value function $v$, the $n$-step return is
+\[
+G_t^{(n)}(v)
+=
+\sum_{k=0}^{n-1}\gamma^k R_{t+k+1}
++
+\gamma^n v(S_{t+n})
+\]
+
+The $\lambda$-return is defined as a weighted average of all $n$-step returns:
+\[
+G_t^\lambda(v)
+=
+(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}G_t^{(n)}(v)
+\]
+Here, $\lambda\in[0,1)$ controls how much weight is given to longer returns.
+
+\paragraph{Bellman operator $\mathcal{T}^\lambda$.}
+The Bellman operator associated with the $\lambda$-return is
+\[
+(\mathcal{T}^\lambda v)(s)
+=
+\mathbb{E}_\pi\!\left[G_t^\lambda(v)\mid S_t=s\right]
+\]
+This operator takes a value function $v$ and returns the expected $\lambda$-return starting from state $s$.
+
+Using linearity of expectation, we can rewrite this operator as
+\[
+\mathcal{T}^\lambda
+=
+(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}\mathcal{T}^{(n)}
+\]
+where $\mathcal{T}^{(n)}$ is the Bellman operator based on the $n$-step return.
+
+\paragraph{Step 1: Contraction of the $n$-step Bellman operator.}
+We first show that for any two value functions $u$ and $v$,
+\[
+\|\mathcal{T}^{(n)}v-\mathcal{T}^{(n)}u\|_\infty
+\le
+\gamma^n\|v-u\|_\infty
+\]
+
+By definition, the $n$-step Bellman operator applied to $v$ is
+\[
+(\mathcal{T}^{(n)} v)(s)
+=
+\mathbb{E}_\pi\!\left[
+\sum_{k=0}^{n-1} \gamma^k R_{t+k+1}
++
+\gamma^n v(S_{t+n})
+\;\middle|\;
+S_t = s
+\right]
+\]
+and a similar expression holds for $(\mathcal{T}^{(n)}u)(s)$.
+
+We subtract the two expressions. The reward terms are exactly the same in both cases, so they cancel out. This leaves
+\[
+(\mathcal{T}^{(n)} v)(s) - (\mathcal{T}^{(n)} u)(s)
+=
+\mathbb{E}_\pi\!\left[
+\gamma^n \big( v(S_{t+n}) - u(S_{t+n}) \big)
+\;\middle|\;
+S_t = s
+\right]
+\]
+
+Next, we take absolute values and use the inequality
+$|\mathbb{E}[X]|\le \mathbb{E}[|X|]$:
+\[
+\left|(\mathcal{T}^{(n)}v)(s) - (\mathcal{T}^{(n)}u)(s)\right|
+\le
+\mathbb{E}_\pi\!\left[
+\gamma^n \left|v(S_{t+n}) - u(S_{t+n})\right|
+\;\middle|\;
+S_t = s
+\right]
+\]
+
+By definition of the $L_\infty$ norm,
+\[
+|v(x)-u(x)| \le \|v-u\|_\infty \quad \text{for any state } x.
+\]
+Applying this to the random state $S_{t+n}$ gives
+\[
+\left|(\mathcal{T}^{(n)}v)(s) - (\mathcal{T}^{(n)}u)(s)\right|
+\le
+\gamma^n \|v-u\|_\infty
+\]
+
+Finally, taking the maximum over all states $s$, we obtain
+\[
+\|\mathcal{T}^{(n)}v-\mathcal{T}^{(n)}u\|_\infty
+\le
+\gamma^n\|v-u\|_\infty
+\]
+
+\paragraph{Step 2: Contraction of $\mathcal{T}^\lambda$.}
+Using the expression of $\mathcal{T}^\lambda$ as a weighted sum of $n$-step operators, we write
+\[
+\mathcal{T}^\lambda v - \mathcal{T}^\lambda u
+=
+(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}
+\big(\mathcal{T}^{(n)}v - \mathcal{T}^{(n)}u\big)
+\]
+
+We now take the $L_\infty$ norm and apply the triangle inequality:
+\[
+\|\mathcal{T}^\lambda v - \mathcal{T}^\lambda u\|_\infty
+\le
+(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}
+\|\mathcal{T}^{(n)}v - \mathcal{T}^{(n)}u\|_\infty
+\]
+
+Substituting the bound from the previous step gives
+\[
+\|\mathcal{T}^\lambda v - \mathcal{T}^\lambda u\|_\infty
+\le
+(1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}\gamma^n
+\|v-u\|_\infty
+\]
+
+\paragraph{Step 3: Contraction rate.}
+Let
+\[
+\eta = (1-\lambda)\sum_{n=1}^{\infty}\lambda^{n-1}\gamma^n
+\]
+This sum is a geometric series and can be computed as
+\[
+\sum_{n=1}^{\infty}\lambda^{n-1}\gamma^n
+=
+\gamma\sum_{m=0}^{\infty}(\lambda\gamma)^m
+=
+\frac{\gamma}{1-\lambda\gamma},
+\]
+which is valid since $\gamma<1$ and $\lambda\in[0,1)$.
+
+Therefore,
+\[
+\eta = \frac{\gamma(1-\lambda)}{1-\lambda\gamma}
+\]
+
+We conclude that
+\[
+\|\mathcal{T}^\lambda v-\mathcal{T}^\lambda u\|_\infty
+\le
+\eta\|v-u\|_\infty
+\]
+with $\eta<1$ for $\gamma<1$. This shows that $\mathcal{T}^\lambda$ is a contraction mapping in the $L_\infty$ norm.
+
+\paragraph{Interpretation}
+The contraction rate $\eta$ depends on both the discount factor $\gamma$ and the parameter $\lambda$.
+The discount factor $\gamma$ determines how strongly future values influence the current estimate, while
+$\lambda$ controls how much weight is given to longer returns.
+
+Smaller values of $\lambda$ place more emphasis on short, bootstrapped returns. As a result, the operator contracts more strongly and convergence is faster. Larger values of $\lambda$ place more weight on long returns, which reduces the amount of bootstrapping and weakens the contraction.
+
+In particular, when $\lambda = 0$, the $\lambda$-return reduces to the one-step TD target, and the contraction rate becomes $\eta = \gamma$, which corresponds to TD(0). As $\lambda \to 1$, the contraction rate approaches $\eta \to 1$, meaning that the operator becomes only weakly contractive. This case corresponds to Monte Carlo methods, which rely on full returns and do not strongly shrink errors at each update.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Question 3}
+
+
+\textbf{(a) Explain the bias–variance trade-off between the Monte Carlo first-visit and every-visit Monte Carlo algorithms. What happens to the bias asymptotically?}
+
+\vspace{1em}
+
+
+Both algorithms are unbiased. This is because both of them use the "true" return as a target for learning. Asymptotically, as the number of episodes goes to infinity, both methods converge to the true value function, and the bias goes to zero.
+
+The main difference can be found in the variance. Every-visit Monte Carlo uses all occurrences of a state within an episode, which introduces correlated samples and can lead to higher variance. First-visit Monte Carlo uses only the first occurrence of a state per episode, reducing correlation between updates and typically resulting in lower variance.
+
+\vspace{1em}
+\vspace{1em}
+
+
+\textbf{(b) Discuss bias-variance trade-off between first-visit Monte Carlo and TD(0) learning algorithms.}
+
+\vspace{1em}
+
+
+TD(0) introduces bias because it uses bootstrapping: the target includes the current value estimate rather than the true return. In contrast, Monte Carlo methods use the full return as the target and are therefore unbiased. In the tabular case, the bias of TD(0) vanishes asymptotically as the value function converges.
+
+In terms of variance, Monte Carlo methods typically have higher variance because they rely on complete returns, which depend on all future rewards and can vary significantly across episodes. TD(0) reduces variance by using a one-step target and bootstrapping from existing estimates, leading to faster and more stable learning.
+
+\vspace{1em}
+\vspace{1em}
+
+
+\textbf{(c) Consider state aggregation for value function approximation as discussed in the class. Explain the bias-variance trade-off as a function of the number of aggregates to estimate the value function. How does the quality of estimates affect when you just have a handful of returns to approximate the value function.}
+
+\vspace{1em}
+
+
+Aggregating states reduces the number of parameters to be estimated by grouping multiple states into a single aggregate. When the number of aggregates is small, many states share the same value estimate, which increases bias because differences between states within the same aggregate cannot be represented. However, this sharing of data reduces variance, since each aggregate is updated using returns from multiple states.
+
+As the number of aggregates increases, the approximation becomes more expressive and the bias decreases, but the variance increases because fewer samples are available per aggregate.
+
+When only a handful of returns are available, using fewer aggregates often leads to better-quality estimate because, even if the bias is higher, the estimates have lower variance and are more stable. With many aggregates and limited data, estimates can have very high variance and be unreliable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{
+Author Contribution
+}
+
+All the team members contributed equally to the assignment. Matheus lead the coding questions, while Miguel lead the theory questions. Subsequently, Matheus contributed to verify correctness and fix errors in the theory part, while Miguel did the same for the coding exploration questions.
+
+\section{LLM Usage Statement}
+
+For the theory questions, ChatGPT was used to fix LaTeX compilation errors, e.g., \emph{The following block of equations is not compiling on Overleaf, how to fix it?}. No LLM usage for the coding part.
+
+% --------------------
+\end{document}
